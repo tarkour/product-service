@@ -1,0 +1,10 @@
+version: 'v2.23.3-desktop.2'
+
+services:
+  db-product-service:
+    image: postgres
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_PASSWORD=root
+
