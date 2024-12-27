@@ -1,10 +1,35 @@
 version: 'v2.23.3-desktop.2'
 
 services:
+  # product-service:
+  #   container_name: product-service-app
+  #   build: ./
+  #   ports:
+  #     - 5432:5433
+  #   depends_on:
+  #     - db-product-service
+  #   env_file:
+  #     - .env
+  #   restart: always
+
   db-product-service:
     image: postgres
+    volumes:
+      - ./.database/postgres/data:/var/lib/postgresql/data
     ports:
       - 5432:5432
+    env_file:
+      - .env
     environment:
-      - POSTGRES_PASSWORD=root
+    - POSTGRES_USER=${DB_USER}
+    - POSTGRES_PASSWORD=${DB_PASSWORD}
+    - POSTGRES_DB=${DB_DATABASE_NAME}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_DATABASE_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
 
+    

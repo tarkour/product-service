@@ -1,7 +1,6 @@
 package config
 
 import (
-	"fmt"
 	"log"
 	"os"
 
@@ -14,6 +13,7 @@ type ConnStr struct {
 	Password string `yaml:"password"`
 	Username string `yaml:"username"`
 	Dbname   string `yaml:"dbname"`
+	Sslmode  string `yaml:"sslmode"`
 }
 
 func Get_connStr(FilePath string) string {
@@ -28,13 +28,7 @@ func Get_connStr(FilePath string) string {
 		log.Printf("error: %v", err)
 	}
 
-	fmt.Println(f.Dbname)
-	fmt.Println(f.Host)
-	fmt.Println(f.Password)
-	fmt.Println(f.Port)
-	fmt.Println(f.Username)
-
-	connStr := "postgres://" + f.Username + ":" + f.Password + "@" + f.Host + ":" + f.Port + "/" + f.Dbname + "?sslmode=disabled"
+	connStr := "postgres://" + f.Username + ":" + f.Password + "@" + f.Host + ":" + f.Port + "/" + f.Dbname + "?sslmode=" + f.Sslmode
 
 	return connStr
 }
