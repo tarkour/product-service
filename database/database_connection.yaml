@@ -1,0 +1,7 @@
+database:
+  host: localhost
+  port: 5436
+  user: postgres
+  password: qwerty
+  dbname: product_service_db
+  sslmode: disable
