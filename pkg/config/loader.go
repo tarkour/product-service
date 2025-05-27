@@ -8,7 +8,7 @@ import (
 
 func LoadConfig(path string) (*Config, error) {
 
-	viper.SetConfigName("database_connection")
+	viper.SetConfigName("config")
 	viper.SetConfigType("yaml")
 	viper.AddConfigPath(path)
 	viper.AutomaticEnv()
