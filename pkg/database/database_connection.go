@@ -6,12 +6,12 @@ import (
 	"log"
 
 	"github.com/jackc/pgx/v5"
-	conf "github.com/tarkour/product-service/internal/config"
+	"github.com/tarkour/product-service/pkg/config"
 )
 
 func ConnectDB() (*pgx.Conn, error) {
 
-	cfg, err := conf.ReadConfig()
+	cfg, err := config.LoadConfig("./internal/config")
 	if err != nil {
 		log.Fatal("Config error: ", err)
 	}
