@@ -5,13 +5,13 @@ import (
 	"fmt"
 	"log"
 
-	"githib.com/tarkour/product-service/pkg/config"
 	"github.com/jackc/pgx/v5"
+	conf "github.com/tarkour/product-service/internal/config"
 )
 
 func ConnectDB() (*pgx.Conn, error) {
 
-	cfg, err := config.LoadConfig("./internal/config")
+	cfg, err := conf.ReadConfig()
 	if err != nil {
 		log.Fatal("Config error: ", err)
 	}
