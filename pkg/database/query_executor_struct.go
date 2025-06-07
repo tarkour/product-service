@@ -12,7 +12,3 @@ type QueryExecutor struct {
 	safeMode bool         // Флаг для блокировки опасных запросов
 	logger   *slog.Logger // Логгер
 }
-
-type Executor interface {
-	Execute(query string) (string, error)
-}
