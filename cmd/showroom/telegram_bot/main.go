@@ -3,31 +3,65 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
 	"log/slog"
-	"os"
 
-	db "githib.com/tarkour/product-service/pkg/database"
-	"github.com/spf13/viper"
+	tg "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+	tgbot "github.com/tarkour/product-service/internal/telegram_bot"
+	"github.com/tarkour/product-service/pkg/config"
+	db "github.com/tarkour/product-service/pkg/database"
+)
+
+const (
+	path = "./internal/config"
 )
 
 func main() {
 
-	config := viper.New()
-	config.Set("database.safe_mode", true)
-
-	conn := db.ConnectDB(config)
-	queryExec := db.NewQueryExecutor(
-		conn,
-		config.GetBool("database.safe_mode"),
-		slog.Default(), // Логгер из pkg/slog_response
-	)
-
-	conn, err := db.ConnectDB()
+	cfg, err := config.LoadConfig(path)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error: ", err)
-		os.Exit(1)
+		log.Fatalf("Config error: %v", err)
 	}
-	defer conn.Close(context.Background())
-	fmt.Println("Database connected.")
 
+	conn, err := db.ConnectDB(path)
+	if err != nil {
+		log.Fatalf("DB connection error: %v", err)
+	}
+
+	defer func() {
+		if err := conn.Close(context.Background()); err != nil {
+			log.Printf("Error closing connection: %v", err)
+		}
+	}()
+
+	fmt.Println("Database connected successfully")
+
+	queryExec := db.NewQueryExecutor(conn, cfg.Telegram.Safe_mode, slog.Default())
+
+	//tgbot launch
+	bot, err := tgbot.InitBot(cfg.Telegram.Token)
+	if err != nil {
+		log.Fatalf("Failed to initialize bot: %v", err)
+	}
+	//
+
+	botHandler := tgbot.NewBotHandler(bot, queryExec, cfg.Telegram.Admin_ID)
+
+	u := tg.NewUpdate(0)
+	u.Timeout = 60
+	updates := bot.GetUpdatesChan(u)
+
+	for update := range updates {
+		if update.Message == nil {
+			continue
+		}
+
+		if update.Message.IsCommand() {
+			switch update.Message.Command() {
+			case "query":
+				botHandler.HandleQueryCommand(update)
+			}
+		}
+
+	}
 }
