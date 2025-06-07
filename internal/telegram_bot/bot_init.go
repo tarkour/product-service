@@ -8,14 +8,14 @@ import (
 )
 
 // Инициализация бота
-func initBot(token string) error {
+func InitBot(token string) (*tg.BotAPI, error) {
 	var err error
 	bot, err := tg.NewBotAPI(token)
 	if err != nil {
-		return fmt.Errorf("Error with token: %w", err)
+		return nil, fmt.Errorf("error with token: %w", err)
 	}
 
 	bot.Debug = true
-	log.Printf("Authorized on account %s", bot.Self.UserName)
-	return nil
+	log.Printf("Authorized on account @%s", bot.Self.UserName)
+	return bot, nil
 }
