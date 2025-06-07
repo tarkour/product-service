@@ -18,3 +18,24 @@ func (m *MockBotApi) GetUpdatesChan(config tg.UpdateConfig) tg.UpdatesChannel {
 	args := m.Called(config)
 	return args.Get(0).(tg.UpdatesChannel)
 }
+
+// гарантированно свежие данные о боте
+func (m *MockBotApi) GetMe() (tg.User, error) {
+	args := m.Called()
+	return args.Get(0).(tg.User), args.Error(1)
+}
+
+// работает в контексте, при правильной инициализации бота
+func (m *MockBotApi) Self() tg.User {
+	args := m.Called()
+	return args.Get(0).(tg.User)
+}
+
+func (m *MockBotApi) Debug() bool {
+	args := m.Called()
+	return args.Bool(0)
+}
+
+func (m *MockBotApi) SetDebug(debug bool) {
+	m.Called(debug)
+}
