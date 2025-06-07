@@ -14,9 +14,9 @@ type DatabaseConfig struct {
 }
 
 type TelegramConfig struct {
-	token     string `yaml: "token"`
-	admin_id  int64  `yaml: "admin_id"`
-	safe_mode bool   `yaml: "safe_mode"`
+	Token     string `yaml: "token"`
+	Admin_ID  int64  `yaml: "admin_id"`
+	Safe_mode bool   `yaml: "safe_mode"`
 }
 
 type Config struct {
