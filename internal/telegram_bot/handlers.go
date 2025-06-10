@@ -72,3 +72,22 @@ func escapeMarkdown(text string) string {
 	)
 	return replacer.Replace(text)
 }
+
+func (h *BotHandler) SendMainMenu(chatID int64) {
+
+	keyboard := tg.NewInlineKeyboardMarkup(
+		tg.NewInlineKeyboardRow(
+			tg.NewInlineKeyboardButtonData("Выгрузка брендов", "download_brands"),
+			tg.NewInlineKeyboardButtonData("Товары в наличии", "products_in_stock"),
+		),
+		tg.NewInlineKeyboardRow(
+			tg.NewInlineKeyboardButtonData("Статистика", "stats"),
+			tg.NewInlineKeyboardButtonData("Проданные товары", "sold_products"),
+		),
+	)
+
+	msg := tg.NewMessage(chatID, "Выберите действие: ")
+	msg.ReplyMarkup = keyboard
+	h.bot.Send(msg)
+
+}
