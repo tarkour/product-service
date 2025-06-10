@@ -43,7 +43,6 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to initialize bot: %v", err)
 	}
-	//
 
 	botHandler := tgbot.NewBotHandler(bot, queryExec, cfg.Telegram.Admin_ID)
 
