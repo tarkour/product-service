@@ -47,7 +47,7 @@ func main() {
 	botHandler := tgbot.NewBotHandler(bot, queryExec, cfg.Telegram.Admin_ID)
 
 	u := tg.NewUpdate(0)
-	u.Timeout = 60
+	u.Timeout = 15
 	updates := bot.GetUpdatesChan(u)
 
 	for update := range updates {
@@ -59,6 +59,8 @@ func main() {
 			switch update.Message.Command() {
 			case "query":
 				botHandler.HandleQueryCommand(update)
+			case "start":
+				botHandler.SendMainMenu(update.FromChat().ID)
 			}
 		}
 

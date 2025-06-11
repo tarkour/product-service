@@ -91,3 +91,48 @@ func (h *BotHandler) SendMainMenu(chatID int64) {
 	h.bot.Send(msg)
 
 }
+
+func (h *BotHandler) HandleCallbackQuery(update tg.Update) {
+
+	callback := update.CallbackQuery
+	if callback == nil {
+		return
+	}
+
+	callbackConf := tg.NewCallback(callback.ID, "")
+	if _, err := h.bot.Request(callbackConf); err != nil {
+		log.Printf("Callback confirmation error: %v", err)
+	}
+
+	switch callback.Data {
+	case "download_brands":
+		h.handleBrandsDownload(callback.Message.Chat.ID)
+		// case "products_in_stock":
+		// 	h.handleProductsInStock(callback.Message.Chat.ID)
+		// case "stats":
+		// 	h.handleStats(callback.Message.Chat.ID)
+		// case "sold_products":
+		// 	h.handleSoldProducts(callback.Message.Chat.ID)
+	}
+}
+
+func (h *BotHandler) handleBrandsDownload(chatID int64) {
+
+	msg := tg.NewMessage(chatID, "⏳ Загружаю данные о брендах...")
+
+	sentMsg, _ := h.bot.Send(msg)
+
+	result, err := h.queryExec.Execute("SELECT id, name FROM brand;")
+
+	deleteMsg := tg.NewDeleteMessage(chatID, sentMsg.MessageID)
+	h.bot.Send(deleteMsg)
+
+	if err != nil {
+		h.bot.Send(tg.NewMessage(chatID, "❌ Ошибка: "+err.Error()))
+		return
+	}
+
+	response := tg.NewMessage(chatID, "Список брендов:\n\n"+escapeMarkdown(result))
+	response.ParseMode = "MarkdownV2"
+	h.bot.Send(response)
+}

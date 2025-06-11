@@ -6,4 +6,7 @@ type BotAPI interface {
 	Send(c tg.Chattable) (tg.Message, error)
 	GetUpdatesChan(config tg.UpdateConfig) tg.UpdatesChannel
 	GetMe() (tg.User, error)
+	Request(c tg.Chattable) (*tg.APIResponse, error)
 }
+
+var _ BotAPI = (*tg.BotAPI)(nil)

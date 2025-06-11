@@ -39,3 +39,8 @@ func (m *MockBotApi) Debug() bool {
 func (m *MockBotApi) SetDebug(debug bool) {
 	m.Called(debug)
 }
+
+func (m *MockBotApi) Request(c tg.Chattable) (*tg.APIResponse, error) {
+	args := m.Called(c)
+	return args.Get(0).(*tg.APIResponse), args.Error(1)
+}
