@@ -46,23 +46,49 @@ func main() {
 
 	botHandler := tgbot.NewBotHandler(bot, queryExec, cfg.Telegram.Admin_ID)
 
+	// processing := tgbot.StartBotProcessing(bot, botHandler)
+
 	u := tg.NewUpdate(0)
 	u.Timeout = 15
 	updates := bot.GetUpdatesChan(u)
 
 	for update := range updates {
-		if update.Message == nil {
+		if update.Message != nil {
+			if update.Message.IsCommand() {
+				switch update.Message.Command() {
+				case "query":
+					botHandler.HandleQueryCommand(update)
+				case "start":
+					botHandler.SendMainMenu(update.FromChat().ID)
+				}
+			}
+		} else if update.CallbackQuery != nil {
+			botHandler.HandleButtonPress(update)
+		} else {
 			continue
 		}
 
-		if update.Message.IsCommand() {
-			switch update.Message.Command() {
-			case "query":
-				botHandler.HandleQueryCommand(update)
-			case "start":
-				botHandler.SendMainMenu(update.FromChat().ID)
-			}
-		}
-
 	}
+	//
+	//
+	//
+	// for update := range updates {
+	// 	if update.Message != nil {
+	// 		// Обработка текстовых команд
+	// 		if update.Message.IsCommand() {
+	// 			switch update.Message.Command() {
+	// 			case "query":
+	// 				botHandler.HandleQueryCommand(update)
+	// 			case "brands":
+	// 				// Отправляем сообщение с кнопкой
+	// 				msg := tgbotapi.NewMessage(update.Message.Chat.ID, "Выберите действие:")
+	// 				msg.ReplyMarkup = getBrandKeyboard()
+	// 				bot.Send(msg)
+	// 			}
+	// 		}
+	// 	} else if update.CallbackQuery != nil {
+	// 		// Обработка нажатий на кнопки
+	// 		botHandler.HandleButtonPress(update)
+	// 	}
+	// }
 }

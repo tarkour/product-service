@@ -20,18 +20,3 @@ func InitBot(token string) (*tg.BotAPI, error) {
 	return bot, nil
 }
 
-func StartBotProcessing(bot *tg.BotAPI, handler *BotHandler) {
-	u := tg.NewUpdate(0)
-	
-	u.Timeout = 30
-	updates := bot.GetUpdatesChan(u)
-
-	for update := range updates{
-		switch{
-		case update.Message != nil:
-			handler.HandleQueryCommand(update)
-		case update.CallbackQuery != nil:
-			handler.HandleCallbackQuery(update)
-		}
-	}
-}
