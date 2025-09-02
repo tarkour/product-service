@@ -52,6 +52,9 @@ func main() {
 	u.Timeout = 15
 	updates := bot.GetUpdatesChan(u)
 
+	var state *string
+	var tempData *map[string]string
+
 	for update := range updates {
 		if update.Message != nil {
 			if update.Message.IsCommand() {
@@ -59,11 +62,12 @@ func main() {
 				case "query":
 					botHandler.HandleQueryCommand(update)
 				case "start":
-					botHandler.SendMainMenu(update.FromChat().ID)
+					botHandler.GetMainMenu()
 				}
 			}
 		} else if update.CallbackQuery != nil {
-			botHandler.HandleButtonPress(update)
+			botHandler.HandleMessage(context.Background(), update, state, tempData)
+			// botHandler.HandleButtonPress(update)
 		} else {
 			continue
 		}
